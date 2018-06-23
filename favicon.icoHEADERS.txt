@@ -1,0 +1,3 @@
+Content-Encoding: identity
+Content-Type: x-icon
+
