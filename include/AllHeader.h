@@ -14,7 +14,7 @@
 
 // Cross platforming
 ///////////////////////////////////////////////
-#define WIN32 1
+//#define WIN32 1
 ///////////////////////////////////////////////
 #ifdef WIN32
 #include<Windows.h>
@@ -49,6 +49,7 @@ typedef HANDLE FINDFILE;
 #include<stdlib.h>
 
 #define LISTEN_PORT_NUM						1025
+#define MAX_PATH							260
 #define PAUSE								{char cPAUSE; scanf("%c", &cPAUSE);}
 #define RETURN_THREAD_TYPE					void*
 #define PTHREAD_TYPE(pStartRoutine)			void* (*pStarRoutine)(void*)
@@ -172,4 +173,4 @@ int cpCloseFindFile(FINDFILE hFindFile);
 #endif
 #endif
 // NO log Debug
-#define logDBG 
+#define logDBG(...)

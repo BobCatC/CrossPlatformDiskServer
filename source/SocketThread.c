@@ -13,7 +13,7 @@
 extern FILE* pLOGFILE;
 
 RETURN_THREAD_TYPE SocketThread(void* pPar) { 
-	DWORD iError = X_NO_ERROR;
+	int iError = X_NO_ERROR;
 	DWORD iSocketError = 0;
 	MUTEX hMutex;
 	DWORD* pnWorkingThreads;
@@ -23,7 +23,7 @@ RETURN_THREAD_TYPE SocketThread(void* pPar) {
 	CPSOCKET Socket = 0;
 	SOCKADDR_IN Sin;
 	//
-	DWORD cbRecvSize = 0;
+	long cbRecvSize = 0;
 	const DWORD cbMaxRecvSize = 1024 * 64 + 1;
 	char* InBuf = 0;
 	bool bSendCloseMessage = false;
@@ -98,7 +98,7 @@ int EndWorkingThread(LOOP_THREAD_COM* pCom, bool bSendCloseMessage, DWORD* pnWor
 	} 
 	*pnWorking -= 1;
 	pbFree[pCom->LTC_ThreadID] = true;
-	log("Thread  %i ended work.	Working now %i\r\n", pCom->LTC_ThreadID, *pnWorking);
+	log("Thread  %i ended work.	Working now %lu\r\n", pCom->LTC_ThreadID, *pnWorking);
 	if (bSendCloseMessage)
 		SendCloseMessage(pCom->LTC_ClientInfo.CSI_Socket);
 	
@@ -498,7 +498,7 @@ int ProcessGET(CPSOCKET Socket, X_METHOD_CONTEXT* pMethodContext, X_HEADERS_CONT
 	}
 
 	if (pMethodContext->MC_cbURISize == 0 || 
-		pMethodContext->MC_cbURISize == 1 && pMethodContext->MC_URI[0] == '*') {
+		(pMethodContext->MC_cbURISize == 1 && pMethodContext->MC_URI[0] == '*')) {
 		// Filling the context for index request
 		cbNameSize = strlen(szDirectoryName);
 		szDirectoryName[cbNameSize] = '*';
@@ -532,8 +532,8 @@ int ProcessGET(CPSOCKET Socket, X_METHOD_CONTEXT* pMethodContext, X_HEADERS_CONT
 }
 
 int CreateHTMLofFolderContent(CPSOCKET Socket, X_GET_CONTEXT* pContext) {
-	DWORD iPos = 0;
-	const DWORD cbStartFolderSize = strlen(SZ_START_FOLDER);
+//	DWORD iPos = 0;
+//	const DWORD cbStartFolderSize = strlen(SZ_START_FOLDER);
 	//
 	FINDFILE hFindFile = 0;
 	FILEINFO FileInfo;
@@ -677,7 +677,7 @@ int AddRecordFile(char* Buf, char* szCurDirrectory, FILEINFO* pFindData, char* s
 
 int SendHTMLAnswer(CPSOCKET Socket, char* Body, DWORD cbBodySize) {
 	char* Buf;
-	int iError;
+	long iError;
 	Buf = (char*)malloc(cbBodySize + CB_STD_MSG_SIZE);
 	int Len = sprintf(Buf, "HTTP/1.1 200 OK\r\nContent-Encoding: identity\r\nContent-Length: %i\r\nContent-Type: text/html; charset=uft-8\r\nConnection: keep-alive\r\n\r\n%s\r\n", 
 		cbBodySize, Body);
@@ -764,7 +764,7 @@ int SendFile(CPSOCKET Socket, X_GET_CONTEXT* pContext, X_HEADERS_CONTEXT* pHeade
 
 bool CheckETag(char* sETag, DWORD cbETagSize, FILE* pMETAFile) {
 	X_META_FILE MetaFile;
-	int n;
+	unsigned long n;
 	//
 	n = fread(&MetaFile, sizeof(MetaFile), 1, pMETAFile);
 	if(n != 1)

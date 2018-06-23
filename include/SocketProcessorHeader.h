@@ -28,9 +28,9 @@ int SendCloseMessage(CPSOCKET Socket);
 
 int SendStdMsg(CPSOCKET Socket, DWORD dwCode, char* szSpecialHeaders, bool bCloseSession);
 
-int GetCurrentDateHTTP(char* Buf);
+size_t GetCurrentDateHTTP(char* Buf);
 
-int CreateAndSendStdMsg(CPSOCKET Socket, char* Buf, char* szStartingLine, char* szHTMLString, char* szSpecialHeaders, bool bCloseConnection);
+size_t CreateAndSendStdMsg(CPSOCKET Socket, char* Buf, char* szStartingLine, char* szHTMLString, char* szSpecialHeaders, bool bCloseConnection);
 
 int EndMessage(char* Buf, char* szHTMLString, bool bCloseConnection);
 //

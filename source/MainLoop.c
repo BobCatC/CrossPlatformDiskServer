@@ -9,8 +9,8 @@
 //////////////////////////////////////////////////////
 
 #include"../include/MainLoopHeader.h"
-
-
+#include <stdio.h>
+#include <string.h>
 FILE* pLOGFILE;
 
 
@@ -18,7 +18,7 @@ int main() {
 	
 	int iError = 0;
 	MUTEX hMainMutex;
-	bool bFreeThread[N_MAX_THREADS] = { true };
+	bool bFreeThread[N_MAX_THREADS];
 	DWORD nWorkingThreads = 0;
 	//
 	CPSOCKET MainListenSocket = INVALID_SOCKET;
@@ -27,19 +27,17 @@ int main() {
 	const int MainListenSockProto = IPPROTO_TCP;
 	const u_short iPort = LISTEN_PORT_NUM;
 	const int MainListenSockBacklog = 20;
-	DWORD dwFlags = 0;
 	//
 	CPSOCKET ConnectedSocket = INVALID_SOCKET;
-	int cbCSinSize;
-	int* pcbCSinSize = 0;
+	unsigned int cbCSinSize;
+	unsigned int* pcbCSinSize = 0;
 	//
 	DWORD iFirstFreeThread = 0;
 	const DWORD nMaxWorkingThreads = N_MAX_THREADS;
 	LOOP_THREAD_COM* pThreadComPorts = 0;
 	//
 	
-	//
-	memset(bFreeThread, true, N_MAX_HEADERS);
+	memset(bFreeThread, true, N_MAX_THREADS);
 	pLOGFILE = fopen("../LogFile.txt", "w");
 
 #ifdef WIN32
@@ -88,7 +86,6 @@ int main() {
 		logDBG("New socket is %i\n", ConnectedSocket);						
 		if (ConnectedSocket == SOCKET_ERROR) {
 			Sleep(4);
-			//SearchFirstFreeThread(nMaxWorkingThreads, &iFirstFreeThread);
 			continue;
 		}
 		pThreadComPorts[iFirstFreeThread].LTC_ClientInfo.CSI_Socket = ConnectedSocket;

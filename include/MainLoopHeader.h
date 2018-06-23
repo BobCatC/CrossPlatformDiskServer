@@ -13,7 +13,6 @@
 #include"ThreadHeader.h"
 #include"SocketProcessorHeader.h"
 //
-int main();
 
 int InitializeThreadComPorts(LOOP_THREAD_COM* pPorts, DWORD nMaxPorts);
 

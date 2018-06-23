@@ -98,7 +98,9 @@ bool cpFindNextFile(char* szPath, FINDFILE hFindFile, FILEINFO* pFileInfo) {
 int cpCloseFindFile(FINDFILE hFindFile) {
 	return FindClose(hFindFile);
 }
+
 #else
+
 int cpSetSocketNonBlock(CPSOCKET Socket) {
 	fcntl(Socket, F_GETFL, 0);
 	return 0;
@@ -158,12 +160,11 @@ int cpDeleteMutex(MUTEX Mutex) {
 
 FINDFILE cpFindFirstFile(char* szFileName, FILEINFO* pFileInfo) {
 	FINDFILE hFindFile;
-	DWORDLONG cbSize;
 	logDBG("FFF ASK: %s\n", szFileName);
 	struct dirent* pDirent;
 	struct stat FileStat;
 	struct tm* ptime;
-	DWORD cbFileNameSize = strlen(szFileName);
+	DWORDLONG cbFileNameSize = strlen(szFileName);
 	char* Buf = (char*)malloc(cbFileNameSize + 1);
 	strcpy(Buf, szFileName);
 	hFindFile = opendir(Buf);
@@ -184,7 +185,7 @@ FINDFILE cpFindFirstFile(char* szFileName, FILEINFO* pFileInfo) {
 	strftime(pFileInfo->FI_szLastModificationTime, 80, "%d.%m.%Y %H:%M", ptime);
 	_i64toa(FileStat.st_size, pFileInfo->FI_szSize, 10);
 
-	if (FileStat.st_mode & S_IFDIR != 0) {
+	if ((FileStat.st_mode & S_IFDIR) != 0) {
 		pFileInfo->FI_bFolder = true;
 		pFileInfo->FI_szSize[0] = '-';
 		pFileInfo->FI_szSize[1] = 0;
@@ -196,8 +197,6 @@ FINDFILE cpFindFirstFile(char* szFileName, FILEINFO* pFileInfo) {
 }
 
 bool cpFindNextFile(char* szPath, FINDFILE hFindFile, FILEINFO* pFileInfo) {
-	DWORDLONG cbSize;
-	DWORD cbFileName = strlen(szPath);
 	struct dirent* pDirent;
 	struct stat FileStat;
 	struct tm* ptime;
@@ -218,7 +217,7 @@ bool cpFindNextFile(char* szPath, FINDFILE hFindFile, FILEINFO* pFileInfo) {
 	strftime(pFileInfo->FI_szLastModificationTime, 80, "%d.%m.%Y %H:%M", ptime);
 	_i64toa(FileStat.st_size, pFileInfo->FI_szSize, 10);
 
-	if (FileStat.st_mode & S_IFDIR != 0) {
+	if ((FileStat.st_mode & S_IFDIR) != 0) {
 		pFileInfo->FI_bFolder = true;
 		pFileInfo->FI_szSize[0] = '-';
 		pFileInfo->FI_szSize[1] = 0;
@@ -231,10 +230,11 @@ bool cpFindNextFile(char* szPath, FINDFILE hFindFile, FILEINFO* pFileInfo) {
 
 int cpCloseFindFile(FINDFILE hFindFile) {
 	closedir(hFindFile);
+	return 0;
 }
 
 void _i64toa(DWORDLONG i, char* Buf, int SS) {
-	sprintf(Buf, "%Li", i);
+	sprintf(Buf, "%lli", i);
 }
 
 int fopen_s(FILE** ppFile, char* szFileName, char* szMode) {
@@ -244,7 +244,7 @@ int fopen_s(FILE** ppFile, char* szFileName, char* szMode) {
 #endif
 int cpGetFileSize(FILE* pFile, DWORD* pcbFileSize) {
 	fseek(pFile, 0, SEEK_END);
-	*pcbFileSize = ftell(pFile);
+	*pcbFileSize = (DWORD)ftell(pFile);
 	rewind(pFile);
 	return 0;
 }

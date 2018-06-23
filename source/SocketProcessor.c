@@ -40,7 +40,6 @@ int SendCloseMessage(CPSOCKET Socket) {
 
 int SendStdMsg(CPSOCKET Socket, DWORD dwCode, char* szSpecialHeaders, bool bCloseSession) {
 	char* Buf = (char*)malloc(CB_STD_MSG_SIZE);
-	DWORD cbBufSize = 0;
 	log("Request ended with %i code\n", dwCode);
 	//
 	switch (dwCode) {
@@ -95,7 +94,7 @@ int SendStdMsg(CPSOCKET Socket, DWORD dwCode, char* szSpecialHeaders, bool bClos
 	return X_NO_ERROR;
 }
 
-int GetCurrentDateHTTP(char* Buf) {
+size_t GetCurrentDateHTTP(char* Buf) {
 	time_t CurTime;
 	struct tm* pTime;
 	//
@@ -104,7 +103,7 @@ int GetCurrentDateHTTP(char* Buf) {
 	return strftime(Buf, 80, "DATE: %a, %d %b %Y %H:%M:%S GMT\r\n", pTime);
 }
 
-int CreateAndSendStdMsg(CPSOCKET Socket, char* Buf, char* szStartingLine, char* szHTMLString, char* szSpecialHeaders, bool bCloseConnection) {
+size_t CreateAndSendStdMsg(CPSOCKET Socket, char* Buf, char* szStartingLine, char* szHTMLString, char* szSpecialHeaders, bool bCloseConnection) {
 	DWORD cbBufSize = 0;
 	//
 	cbBufSize += sprintf(Buf, "%s", szStartingLine);
