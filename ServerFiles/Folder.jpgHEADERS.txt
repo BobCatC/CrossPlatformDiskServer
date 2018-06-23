@@ -1,0 +1,4 @@
+ETag: "aaaaaaalaaaaaaac"
+Content-Encoding: identity
+Content-Type: image/jpg
+
